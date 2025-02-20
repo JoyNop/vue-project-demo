@@ -14,7 +14,8 @@ const emit = defineEmits(['toggle', 'remove'])
 
 <template>
   <li :class="{ completed: todo.completed }">
-    <Checkbox type="checkbox" :checked="todo.completed" @change="emit('toggle', todo.id)" />
+    <input type="checkbox" :checked="todo.completed" @change="emit('toggle', todo.id)" />
+    <!-- <Checkbox type="checkbox" :checked="todo.completed" @change="emit('toggle', todo.id)" /> -->
     <span>{{ todo.text }}</span>
     <button @click="emit('remove', todo.id)">❌</button>
   </li>
@@ -47,5 +48,9 @@ button {
 :deep(.ant-checkbox-checked .ant-checkbox-inner) {
   background-color: #497aad !important; /* 选中背景色 */
   border-color: #497aad !important; /* 选中边框色 */
+}
+
+input[type='checkbox'] {
+  accent-color: #497aad; /* 让 Checkbox 选中时变红 */
 }
 </style>
