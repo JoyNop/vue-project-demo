@@ -25,6 +25,8 @@ export default defineConfigWithVueTs(
     rules: {
       '@typescript-eslint/no-unused-vars': ['off'], // 只警告，不报错
       'vue/no-unused-vars': ['off'], // 只警告，不报错
+
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 )
