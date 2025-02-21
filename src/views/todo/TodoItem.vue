@@ -2,22 +2,31 @@
 import { Checkbox } from 'ant-design-vue'
 import { defineProps, defineEmits } from 'vue'
 
-interface Todo {
-  id: number
-  text: string
-  completed: boolean
+enum TaskStatus {
+  TODO = 0,
+  DONE = 1,
 }
 
-const props = defineProps<{ todo: Todo }>()
+interface Task {
+  id: number
+  text: string
+  status: TaskStatus
+}
+
+const props = defineProps<{ task: Task }>()
 const emit = defineEmits(['toggle', 'remove'])
 </script>
 
 <template>
-  <li :class="{ completed: todo.completed }">
-    <input type="checkbox" :checked="todo.completed" @change="emit('toggle', todo.id)" />
+  <li :class="{ completed: props.task.status === TaskStatus.DONE }">
+    <input
+      type="checkbox"
+      :checked="props.task.status === TaskStatus.DONE"
+      @change="emit('toggle', props.task.id)"
+    />
     <!-- <Checkbox type="checkbox" :checked="todo.completed" @change="emit('toggle', todo.id)" /> -->
-    <span>{{ todo.text }}</span>
-    <button @click="emit('remove', todo.id)">❌</button>
+    <span>{{ props.task.text }}</span>
+    <button @click="emit('remove', props.task.id)">❌</button>
   </li>
 </template>
 

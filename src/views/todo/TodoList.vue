@@ -3,40 +3,47 @@ import { onMounted, ref, watch } from 'vue'
 import TodoItem from './TodoItem.vue'
 import TodoInput from './TodoInput.vue'
 
-interface Todo {
+enum TaskStatus {
+  TODO = 0,
+  DONE = 1,
+}
+
+interface Task {
   id: number
   text: string
-  completed: boolean
+  status: TaskStatus
 }
 const saveToLocal = ref(false) // 是否存入本地
-const todos = ref<Todo[]>([
-  { id: 1, text: 'Learn Vue', completed: false },
-  { id: 2, text: 'Write Code', completed: false },
+const tasks = ref<Task[]>([
+  { id: 1, text: 'Learn Vue', status: TaskStatus.TODO },
+  { id: 2, text: 'Write Code', status: TaskStatus.DONE },
 ])
 
-const addTodo = (text: string) => {
-  todos.value.push({
+const addTask = (text: string) => {
+  tasks.value.push({
     id: Date.now(),
     text,
-    completed: false,
+    status: TaskStatus.TODO,
   })
   updateLocalStorage()
 }
 
-const toggleTodo = (id: number) => {
-  const todo = todos.value.find((t) => t.id === id)
-  if (todo) todo.completed = !todo.completed
+const toggleTask = (id: number) => {
+  const task = tasks.value.find((t) => t.id === id)
+  if (task) {
+    task.status = task.status === TaskStatus.TODO ? TaskStatus.DONE : TaskStatus.TODO
+  }
   updateLocalStorage()
 }
 
-const removeTodo = (id: number) => {
-  todos.value = todos.value.filter((t) => t.id !== id)
+const removeTask = (id: number) => {
+  tasks.value = tasks.value.filter((t) => t.id !== id)
   updateLocalStorage()
 }
 // 更新 localStorage
 const updateLocalStorage = () => {
   if (saveToLocal.value) {
-    localStorage.setItem('todos', JSON.stringify(todos.value))
+    localStorage.setItem('tasks', JSON.stringify(tasks.value))
   }
 }
 // 监听 `saveToLocal` 变化，存储到 localStorage
@@ -52,9 +59,9 @@ onMounted(() => {
   }
 
   if (saveToLocal.value) {
-    const storedTodos = localStorage.getItem('todos')
-    if (storedTodos) {
-      todos.value = JSON.parse(storedTodos)
+    const storedtasks = localStorage.getItem('tasks')
+    if (storedtasks) {
+      tasks.value = JSON.parse(storedtasks)
     }
   }
 })
@@ -67,14 +74,14 @@ onMounted(() => {
       <input type="checkbox" v-model="saveToLocal" />
       存入本地（刷新后保留）
     </label>
-    <TodoInput @add-todo="addTodo" />
+    <TodoInput @add-todo="addTask" />
     <ul>
       <TodoItem
-        v-for="todo in todos"
-        :key="todo.id"
-        :todo="todo"
-        @toggle="toggleTodo"
-        @remove="removeTodo"
+        v-for="task in tasks"
+        :key="task.id"
+        :task="task"
+        @toggle="toggleTask"
+        @remove="removeTask"
       />
     </ul>
   </div>
